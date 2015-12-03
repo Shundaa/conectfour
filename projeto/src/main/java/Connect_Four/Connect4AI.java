@@ -251,7 +251,10 @@ public class Connect4AI {
             }
             b.undoMove(j);
         }
-        return turn==1?maxScore:minScore;
+        if(turn==1)
+            return maxScore;
+        else
+            return minScore;
     }
     
     public int getAIMove(){

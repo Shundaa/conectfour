@@ -15,6 +15,8 @@ class Board{
     } 
     
     public boolean isLegalMove(int column){
+        System.out.println(column);
+        
         return board[0][column]=='*';
     }
     
@@ -25,7 +27,7 @@ class Board{
             cplayer='O';
         else
             cplayer='X';
-        if(!isLegalMove(column)) {System.out.println("Illegal move!"); return false;}
+        if(!isLegalMove(column)) {System.out.println("Jogada Invalida1"); return false;}
         for(int i=5;i>=0;--i){
             if(board[i][column] == '*') {
                 board[i][column] = cplayer;
@@ -37,8 +39,8 @@ class Board{
     
     public void undoMove(int column){
         for(int i=0;i<=5;++i){
-            if(board[i][column] != 0) {
-                board[i][column] = 0;
+            if(board[i][column] != '*') {
+                board[i][column] = '*';
                 break;
             }
         }        
