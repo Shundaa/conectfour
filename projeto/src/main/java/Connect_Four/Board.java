@@ -1,29 +1,34 @@
 package Connect_Four;
 
 class Board{
-    byte[][] board = new byte[6][7];
+    char[][] board = new char[6][7];
     
     public Board(){
-        board = new byte[][]{
-            {0,0,0,0,0,0,0,},
-            {0,0,0,0,0,0,0,},
-            {0,0,0,0,0,0,0,},
-            {0,0,0,0,0,0,0,},
-            {0,0,0,0,0,0,0,},
-            {0,0,0,0,0,0,0,},    
+        board = new char[][]{
+            {'*','*','*','*','*','*','*',},
+            {'*','*','*','*','*','*','*',},
+            {'*','*','*','*','*','*','*',},
+            {'*','*','*','*','*','*','*',},
+            {'*','*','*','*','*','*','*',},
+            {'*','*','*','*','*','*','*',},    
         };
     } 
     
     public boolean isLegalMove(int column){
-        return board[0][column]==0;
+        return board[0][column]=='*';
     }
     
     //Placing a Move on the board
     public boolean placeMove(int column, int player){ 
+        char cplayer;
+        if(player==1)
+            cplayer='O';
+        else
+            cplayer='X';
         if(!isLegalMove(column)) {System.out.println("Illegal move!"); return false;}
         for(int i=5;i>=0;--i){
-            if(board[i][column] == 0) {
-                board[i][column] = (byte)player;
+            if(board[i][column] == '*') {
+                board[i][column] = cplayer;
                 return true;
             }
         }
