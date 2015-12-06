@@ -15,8 +15,6 @@ class Board{
     } 
     
     public boolean isLegalMove(int column){
-        System.out.println(column);
-        
         return board[0][column]=='*';
     }
     
