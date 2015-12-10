@@ -7,7 +7,7 @@ public class Connect4AI {
     private Board b;
     private Scanner scan;
     private int nextMoveLocation=-1;
-    private int maxDepth = 6;
+    private int maxDepth = 8;
     
     public Connect4AI(Board b){
         this.b = b;
@@ -16,25 +16,24 @@ public class Connect4AI {
     
     public static void main(String[] args) {
         Board b = new Board();
-        Connect4AI ai = new Connect4AI(b);  
+        Connect4AI ai = new Connect4AI(b);
         ai.JogarContraAI();
     }
     
-    
-    //Vez do jogar "humando"
+    //Vez do jogar "humano"
     
     
     public void JogadaOponente(){
         System.out.println("Sua vez (1-7): ");
         int move = scan.nextInt();
-        while(move<1 || move > 7 || !b.JogadaLegal(move-1)){
+        while(move<1 || move > 7 || !b.JogadaValida(move-1)){
             System.out.println("Jogada Invalida.\n\nSua vez (1-7): "); 
             move = scan.nextInt();
         }
         
         //Faz a jogada
         //int move=(JogadaAI());
-        b.FazerJogada(move-1, 2); 
+        b.FazerJogada(move-1, 2);
     }
     
     
@@ -58,7 +57,7 @@ public class Connect4AI {
                                 break; 
                     }
                     if(aiScore==4)
-                        return 1; 
+                        return 1;
                     else if (humanScore==4)
                         return 2;
                     aiScore = 0; 
@@ -130,9 +129,10 @@ public class Connect4AI {
         return 0;
     }
     
-    int CalculaPontuacao(int aiScore, int moreMoves){   
-        int moveScore = 4 - moreMoves;
-        if(aiScore==0)return 0;
+    int CalculaPontuacao(int aiScore, int moreMoves){
+        int moveScore = maxDepth/2 - moreMoves;
+        if(aiScore==0)
+            return 0;
         else if(aiScore==1)
             return 1*moveScore;
         else if(aiScore==2)
@@ -153,8 +153,8 @@ public class Connect4AI {
             for(int j=0;j<=6;++j){
                 
                 if(b.board[i][j]=='*' || b.board[i][j]=='X') continue; 
-                
-                if(j<=3){ 
+                //direita
+                if(j<=3){
                     for(k=1;k<4;++k){
                         if(b.board[i][j+k]=='O')
                             aiScore++;
@@ -169,9 +169,9 @@ public class Connect4AI {
                     moreMoves = 0; 
                     if(blanks>0) 
                         for(int c=1;c<4;++c){
-                            int column = j+c;
+                            int coluna = j+c;
                             for(int m=i; m<= 5;m++){
-                             if(b.board[m][column]=='*')
+                             if(b.board[m][coluna]=='*')
                                  moreMoves++;
                              else
                                 break;
@@ -183,7 +183,7 @@ public class Connect4AI {
                     aiScore=1;   
                     blanks = 0;
                 } 
-                
+                //cima
                 if(i>=3){
                     for(k=1;k<4;++k){
                         if(b.board[i-k][j]=='O')
@@ -196,9 +196,9 @@ public class Connect4AI {
                     moreMoves = 0; 
                     
                     if(aiScore>0){
-                        int column = j;
+                        int coluna = j;
                         for(int m=i-k+1; m<=i-1;m++){
-                            if(b.board[m][column]=='*')
+                            if(b.board[m][coluna]=='*')
                                 moreMoves++;
                             else 
                                 break;
@@ -209,7 +209,7 @@ public class Connect4AI {
                     aiScore=1;  
                     blanks = 0;
                 }
-                 
+                //esquerda
                 if(j>=3){
                     for(k=1;k<4;++k){
                         if(b.board[i][j-k]=='O')
@@ -225,9 +225,9 @@ public class Connect4AI {
                     moreMoves=0;
                     if(blanks>0) 
                         for(int c=1;c<4;++c){
-                            int column = j- c;
+                            int coluna = j- c;
                             for(int m=i; m<= 5;m++){
-                                if(b.board[m][column]=='*')
+                                if(b.board[m][coluna]=='*')
                                     moreMoves++;
                                 else
                                     break;
@@ -239,7 +239,7 @@ public class Connect4AI {
                     aiScore=1; 
                     blanks = 0;
                 }
-                 
+                 //cima direita
                 if(j<=3 && i>=3){
                     for(k=1;k<4;++k){
                         if(b.board[i-k][j+k]=='O')aiScore++;
@@ -249,11 +249,11 @@ public class Connect4AI {
                     moreMoves=0;
                     if(blanks>0){
                         for(int c=1;c<4;++c){
-                            int column = j+c, row = i-c;
+                            int coluna = j+c, row = i-c;
                             for(int m=row;m<=5;++m){
-                                if(b.board[m][column]=='X')
+                                if(b.board[m][coluna]=='X')
                                     moreMoves++;
-                                else if(b.board[m][column]=='O');
+                                else if(b.board[m][coluna]=='O');
                                 else
                                     break;
                             }
@@ -264,7 +264,7 @@ public class Connect4AI {
                         blanks = 0;
                     }
                 }
-                 
+                 //cima esquerda
                 if(i>=3 && j>=3){
                     for(k=1;k<4;++k){
                         if(b.board[i-k][j-k]=='O')
@@ -280,11 +280,11 @@ public class Connect4AI {
                     moreMoves=0;
                     if(blanks>0){
                         for(int c=1;c<4;++c){
-                            int column = j-c, row = i-c;
+                            int coluna = j-c, row = i-c;
                             for(int m=row;m<=5;++m){
-                                if(b.board[m][column]=='*')
+                                if(b.board[m][coluna]=='*')
                                     moreMoves++;
-                                else if(b.board[m][column]=='O');
+                                else if(b.board[m][coluna]=='O');
                                 else 
                                     break;
                             }
@@ -302,11 +302,11 @@ public class Connect4AI {
     
     public int minimax(int depth, int turn){
         int FimDeJogo = FimDeJogo(b);
-        if(FimDeJogo==1)
+        if(FimDeJogo==1)                    //AI ganho entao max
             return Integer.MAX_VALUE;
-        else if(FimDeJogo==2)
+        else if(FimDeJogo==2)               // Humano ganho entao min
             return Integer.MIN_VALUE;
-        else if(FimDeJogo==0)
+        else if(FimDeJogo==0)               // empate da nada
             return 0;
         
         if(depth==maxDepth)
@@ -314,7 +314,7 @@ public class Connect4AI {
         
         int maxScore=Integer.MIN_VALUE, minScore = Integer.MAX_VALUE;
         for(int j=0;j<=6;++j){
-            if(!b.JogadaLegal(j)) 
+            if(!b.JogadaValida(j)) 
                 continue;
                 
             if(turn==1){
