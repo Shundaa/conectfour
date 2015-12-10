@@ -14,35 +14,40 @@ public class Connect4AI {
         scan = new Scanner(System.in);
     }
     
+    public static void main(String[] args) {
+        Board b = new Board();
+        Connect4AI ai = new Connect4AI(b);  
+        ai.JogarContraAI();
+    }
     
     
-    //Opponent's turn
+    //Vez do jogar "humando"
     
     
-    public void letOpponentMove(){
+    public void JogadaOponente(){
         System.out.println("Sua vez (1-7): ");
-        /*int move = scan.nextInt();
-        while(move<1 || move > 7 || !b.isLegalMove(move-1)){
+        int move = scan.nextInt();
+        while(move<1 || move > 7 || !b.JogadaLegal(move-1)){
             System.out.println("Jogada Invalida.\n\nSua vez (1-7): "); 
             move = scan.nextInt();
         }
-        */
-        //Assume 2 is the opponent
-        int move=(getAIMove());
-        b.placeMove(move, 2); 
+        
+        //Faz a jogada
+        //int move=(JogadaAI());
+        b.FazerJogada(move-1, 2); 
     }
     
     
     
-    //Game Result
-    public int gameResult(Board b){
+    //Resultado do jogo
+    public int FimDeJogo(Board b){
         int aiScore = 0, humanScore = 0;
         for(int i=5;i>=0;--i){
             for(int j=0;j<=6;++j){
                 if(b.board[i][j]=='*') 
                     continue;
                 
-                //Checking cells to the right
+                //Olha a linha pra direita
                 if(j<=3){
                     for(int k=0;k<4;++k){ 
                             if(b.board[i][j+k]=='O') 
@@ -60,7 +65,7 @@ public class Connect4AI {
                     humanScore = 0;
                 } 
                 
-                //Checking cells up
+                //Olha a coluna pra cima
                 if(i>=3){
                     for(int k=0;k<4;++k){
                             if(b.board[i-k][j]=='O') 
@@ -78,7 +83,7 @@ public class Connect4AI {
                     humanScore = 0;
                 } 
                 
-                //Checking diagonal up-right
+                //Olha pra diagonal Cima-Direita
                 if(j<=3 && i>= 3){
                     for(int k=0;k<4;++k){
                         if(b.board[i-k][j+k]=='O') 
@@ -96,7 +101,7 @@ public class Connect4AI {
                     humanScore = 0;
                 }
                 
-                //Checking diagonal up-left
+                //Olha pra diagonal Cima-Esquerda
                 if(j>=3 && i>=3){
                     for(int k=0;k<4;++k){
                         if(b.board[i-k][j-k]=='O') 
@@ -117,15 +122,15 @@ public class Connect4AI {
         }
         
         for(int j=0;j<7;++j){
-            //Game has not ended yet
+            //Jogo nao termino
             if(b.board[0][j]=='*')
                 return -1;
         }
-        //Game draw!
+        //Empate
         return 0;
     }
     
-    int calculateScore(int aiScore, int moreMoves){   
+    int CalculaPontuacao(int aiScore, int moreMoves){   
         int moveScore = 4 - moreMoves;
         if(aiScore==0)return 0;
         else if(aiScore==1)
@@ -137,8 +142,8 @@ public class Connect4AI {
         else return 1000;
     }
     
-    //Evaluate board favorableness for AI
-    public int evaluateBoard(Board b){
+    //Calcula a pontuacao do Tabuleiro para a AI
+    public int PontuacaoTabuleiro(Board b){
       
         int aiScore=1;
         int score=0;
@@ -174,7 +179,7 @@ public class Connect4AI {
                         } 
                     
                     if(moreMoves!=0) 
-                        score += calculateScore(aiScore, moreMoves);
+                        score += CalculaPontuacao(aiScore, moreMoves);
                     aiScore=1;   
                     blanks = 0;
                 } 
@@ -200,7 +205,7 @@ public class Connect4AI {
                         }  
                     }
                     if(moreMoves!=0)
-                        score += calculateScore(aiScore, moreMoves);
+                        score += CalculaPontuacao(aiScore, moreMoves);
                     aiScore=1;  
                     blanks = 0;
                 }
@@ -230,7 +235,7 @@ public class Connect4AI {
                         } 
                     
                     if(moreMoves!=0) 
-                        score += calculateScore(aiScore, moreMoves);
+                        score += CalculaPontuacao(aiScore, moreMoves);
                     aiScore=1; 
                     blanks = 0;
                 }
@@ -254,7 +259,7 @@ public class Connect4AI {
                             }
                         } 
                         if(moreMoves!=0) 
-                            score += calculateScore(aiScore, moreMoves);
+                            score += CalculaPontuacao(aiScore, moreMoves);
                         aiScore=1;
                         blanks = 0;
                     }
@@ -285,7 +290,7 @@ public class Connect4AI {
                             }
                         } 
                         if(moreMoves!=0)
-                            score += calculateScore(aiScore, moreMoves);
+                            score += CalculaPontuacao(aiScore, moreMoves);
                         aiScore=1;
                         blanks = 0;
                     }
@@ -296,24 +301,24 @@ public class Connect4AI {
     } 
     
     public int minimax(int depth, int turn){
-        int gameResult = gameResult(b);
-        if(gameResult==1)
+        int FimDeJogo = FimDeJogo(b);
+        if(FimDeJogo==1)
             return Integer.MAX_VALUE;
-        else if(gameResult==2)
+        else if(FimDeJogo==2)
             return Integer.MIN_VALUE;
-        else if(gameResult==0)
+        else if(FimDeJogo==0)
             return 0;
         
         if(depth==maxDepth)
-            return evaluateBoard(b);
+            return PontuacaoTabuleiro(b);
         
         int maxScore=Integer.MIN_VALUE, minScore = Integer.MAX_VALUE;
         for(int j=0;j<=6;++j){
-            if(!b.isLegalMove(j)) 
+            if(!b.JogadaLegal(j)) 
                 continue;
                 
             if(turn==1){
-                    b.placeMove(j, 1);
+                    b.FazerJogada(j, 1);
                     int currentScore = minimax(depth+1, 2);
                     maxScore = Math.max(currentScore, maxScore);
                     if(depth==0){
@@ -322,11 +327,11 @@ public class Connect4AI {
                     }
             }
             else if(turn==2){
-                    b.placeMove(j, 2);
+                    b.FazerJogada(j, 2);
                     int currentScore = minimax(depth+1, 1);
                     minScore = Math.min(currentScore, minScore);
             }
-            b.undoMove(j);
+            b.DesfazJogada(j);
         }
         if(turn==1)
             return maxScore;
@@ -334,63 +339,63 @@ public class Connect4AI {
             return minScore;
     }
     
-    public int getAIMove(){
+    public int JogadaAI(){
         nextMoveLocation = -1;
         minimax(0, 1);
         return nextMoveLocation;
     }
     
-    public void playAgainstAIConsole(){
+    public void JogarContraAI(){
         Scanner scan = new Scanner(System.in);
         System.out.println("Voce quer comecar? (sim,nao) ");
         String answer = scan.next().trim();
         
         if(answer.equalsIgnoreCase("sim")) 
-            letOpponentMove();
-        b.displayBoard();
+            JogadaOponente();
+        b.PrintaTabuleiro();
         if(b.board[5][3]=='X'){ 
             Random gerador = new Random();
             int numero = gerador.nextInt(5);
             while(numero!=2&&numero!=4)
                 numero = gerador.nextInt(5);
-            b.placeMove(numero, 1);
-            b.displayBoard();
+            b.FazerJogada(numero, 1);
+            b.PrintaTabuleiro();
         }
         else{
-            b.placeMove(3, 1);
-            b.displayBoard();
+            b.FazerJogada(3, 1);
+            b.PrintaTabuleiro();
         }
         while(true){ 
-            letOpponentMove();
-            b.displayBoard();
+            JogadaOponente();
+            b.PrintaTabuleiro();
             
-            int gameResult = gameResult(b);
-            if(gameResult==1){
+            int FimDeJogo = FimDeJogo(b);
+            if(FimDeJogo==1){
                 System.out.println("Computador ganhou!");
                 break;
             }
-            else if(gameResult==2){
+            else if(FimDeJogo==2){
                 System.out.println("Voce ganhou!");
                 break;
             }
-            else if(gameResult==0){
+            else if(FimDeJogo==0){
                 System.out.println("Empate!");
                 break;
             }
             
-            b.placeMove(getAIMove(), 1);
-            b.displayBoard();
-            gameResult = gameResult(b);
+            b.FazerJogada(JogadaAI(), 1);
+            b.PrintaTabuleiro();
+            FimDeJogo = FimDeJogo(b);
             
-            if(gameResult==1){
+            if(FimDeJogo==1){
                 System.out.println("Computador ganhou!");
                 break;
             }
-            else if(gameResult==2){
+            else if(FimDeJogo==2){
                 System.out.println("Voce ganhou!");
                 break;
             }
-            else if(gameResult==0){
+            else if(FimDeJogo==0){
                 System.out.println("Empate!");
                 break;
             }
@@ -398,9 +403,4 @@ public class Connect4AI {
         
     }
     
-    public static void main(String[] args) {
-        Board b = new Board();
-        Connect4AI ai = new Connect4AI(b);  
-        ai.playAgainstAIConsole();
-    }
 }
